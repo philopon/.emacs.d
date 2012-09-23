@@ -38,6 +38,25 @@
     )
  )
 
+(defun get-path-from-environment-plist (&optional nokill)
+  (let ((buf (find-file-noselect "~/.MacOSX/environment.plist")) begin result)
+    (with-current-buffer buf
+      (goto-char (point-min))
+      (re-search-forward "<key>PATH</key>")
+      (re-search-forward "<string>")
+      (setq begin (point))
+      (re-search-forward "</string>")
+      (setq result (split-string (buffer-substring-no-properties begin (- (point) 9)) ":"))
+      )
+    (unless nokill (kill-buffer buf))
+    result
+    )
+  )
+
+(defun exec-path-to-env (list)
+  (apply 'concat (loop for path in list
+                       collect (concat path ":")
+                       )))
 
 (provide 'myfunctions)
 
