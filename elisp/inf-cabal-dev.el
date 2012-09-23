@@ -48,8 +48,9 @@
 
 (defun inf-cabal-dev-get-package-conf (buf)
   (let ((root (inferior-haskell-find-project-root buf)))
-    (when root
-      (concat root inf-cabal-dev-package-subdir)
+    (if root
+        (concat root inf-cabal-dev-package-subdir)
+      (haskell-cabal-find-dir)
       )))
 
 (defun inf-cabal-dev-packages-id-from-package-conf (&optional conf)
