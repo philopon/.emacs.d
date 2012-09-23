@@ -1,4 +1,5 @@
 
+(add-to-list 'load-path "~/src/ghc-mod-1.11.0/cabal-dev/share/ghc-mod-1.11.0")
 (add-to-list 'load-path "~/.emacs.d/elisp")
 
 (require 'myfunctions)
@@ -16,4 +17,4 @@
 (config-load "undo.el")
 (config-load "anything.el")
 (config-load "auto-complete.el")
-
+(config-load "haskell.el")
