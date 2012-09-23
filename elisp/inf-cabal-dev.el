@@ -69,31 +69,42 @@
         (re-search-forward ":" nil nil 2) (forward-char)
         (setq result
               (loop for i from (line-number-at-pos)
-                    do (goto-line i) (end-of-line)
-                    for eolpos = (point)
+                    do (goto-line i)
+                    for startpos = (point)
+                    do (end-of-line) (skip-chars-backward ")")
+                    for endpos   = (point)
+
+                    do (re-search-backward "(" startpos t)
+                    for begin  = (point)
                     do (beginning-of-line)
-                    while (re-search-forward "^    " eolpos t)
-                    do (skip-chars-forward "^(" eolpos)
-                    collect (buffer-substring (+ (point) 1) (- eolpos 1))
+                    while (re-search-forward "^    " endpos t)
+                    collect (buffer-substring (+ begin 1) endpos)
                     ))
         ))
     (kill-buffer buf)
     result
     ))
-; (inf-cabal-dev-packages-id-from-package-conf)
+
 ; (inf-cabal-dev-packages-id-from-package-conf "/Users/philopon/src/yesod-platform-1.1.2/cabal-dev/packages-7.4.1.conf")
 
 (defun inf-cabal-dev-split-package-id (id)
-  (let* ((list (reverse (split-string id "-")))
-         (hash (car list))
-         (version (car (cdr list)))
-         (name (apply 'concat (cdr (reverse (loop for s in (cdr (cdr list))
-                                                  append (cons s (cons "-" nil))
-                                                  )))))
-         )
-    (list name version hash)
-    ))
+  (let ((list (reverse (split-string id "-"))))
+    (if (>= (length list) 3)
+        (let* ((hash (car list))
+               (version (car (cdr list)))
+               (name (apply 'concat (cdr (reverse (loop for s in (cdr (cdr list))
+                                                        append (cons s (cons "-" nil))
+                                                        )))))
+               )
+          (list name version hash)
+          )
+      (list id)
+    )))
+; (inf-cabal-dev-split-package-id "parallel-3.2.0.2-98167199466a568a2378238fd9230cf9")
 ; (inf-cabal-dev-split-package-id "bin-package-db-0.0.0.0-af08a1f9473d7bac1855916fdb29ba8c")
+; (inf-cabal-dev-split-package-id "builtin_rts")
+
+(split-string "builtin_rts" "-")
 
 (defun inf-cabal-dev-build-depends (buf)
     (with-current-buffer buf
@@ -123,9 +134,11 @@
                                     (car (inf-cabal-dev-split-package-id id))
                                     id)) list))
         )
-    (mapcar (lambda (name) (cdr (assoc name dict))) names)
-    ))
-; (inf-cabal-dev-names-to-ids (list "Cabal" "base") (inf-cabal-dev-packages-id-from-package-conf))
+    (loop for i in (mapcar (lambda (name) (cdr (assoc name dict))) names)
+          when i collect i
+          )))
+
+; (inf-cabal-dev-names-to-ids (list "Cabal" "base" "ghc") (inf-cabal-dev-packages-id-from-package-conf))
 
 (defun inf-cabal-dev-get-package-name (buf)
   (with-current-buffer buf
@@ -139,37 +152,29 @@
   (let ((old (get-buffer-process inferior-haskell-buffer)))
     (when old (kill-process old)))
   (let* ((pkgcnf (inf-cabal-dev-get-package-conf (current-buffer)))
-         (cabal (find-file-noselect (haskell-cabal-find-file)))
+         (cabal  (find-file-noselect (haskell-cabal-find-file)))
+         (dict   (append
+                  (inf-cabal-dev-packages-id-from-package-conf pkgcnf)
+                  (inf-cabal-dev-packages-id-from-package-conf)
+                  ))
+         (pkgs   (inf-cabal-dev-unique-list
+                  (apply 'append (inf-cabal-dev-build-depends cabal))))
          (command (append (mapcar 'eval '(haskell-program-name
                                           (concat "-package-name " (inf-cabal-dev-get-package-name cabal))
                                           "-hide-all-packages"
                                           "-fbuilding-cabal-package"
                                           "-no-user-package-conf"
                                           (concat "-package-conf " pkgcnf)
-                                          "-i -idist/build"
-                                          "-i. -idist/build/autogen"
-                                          "-Idist/build/autogen"
-                                          "-Idist/build"
-                                          "-optP-include -optPdist/build/autogen/cabal_macros.h"
-                                          "-odir dist/build"
-                                          "-hidir dist/build"
-                                          "-stubdir dist/build"
                                           ))
                           (mapcar (lambda (i) (concat "-package-id " i))
                                   (inf-cabal-dev-names-to-ids
-                                   (inf-cabal-dev-unique-list
-                                    (apply 'append (inf-cabal-dev-build-depends cabal)))
-                                   (append
-                                    (inf-cabal-dev-packages-id-from-package-conf pkgcnf)
-                                    (inf-cabal-dev-packages-id-from-package-conf)
-                                    )
+                                   pkgs
+                                   dict
                                   ))
                           )))
     (inferior-haskell-start-process command)
     )
   )
-
-
 
 (provide 'inf-cabal-dev)
 
