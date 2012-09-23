@@ -65,14 +65,13 @@
          )
     (when (= ret 0)
       (with-current-buffer buf
-        (goto-char (point-max))
-        (re-search-backward "using cache:")
-        (re-search-forward ":" nil nil 2) (forward-char)
+        (goto-char (point-min))
+        (re-search-forward "^    " nil t)
         (setq result
               (loop for i from (line-number-at-pos)
                     do (goto-line i)
                     for startpos = (point)
-                    do (end-of-line) (skip-chars-backward ")")
+                    do (end-of-line) (skip-chars-backward ")}")
                     for endpos   = (point)
 
                     do (re-search-backward "(" startpos t)
@@ -87,6 +86,8 @@
     ))
 
 ; (inf-cabal-dev-packages-id-from-package-conf "/Users/philopon/src/yesod-platform-1.1.2/cabal-dev/packages-7.4.1.conf")
+
+; (inf-cabal-dev-packages-id-from-package-conf "/Users/philopon/src/test/cabal-dev/packages-7.4.1.conf")
 
 (defun inf-cabal-dev-split-package-id (id)
   (let ((list (reverse (split-string id "-"))))
