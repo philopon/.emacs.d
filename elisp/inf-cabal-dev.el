@@ -114,8 +114,11 @@
                           for start = (point)
                           do (skip-chars-forward "^[ \t\n]")
                           collect (buffer-substring-no-properties start (point))
-                          do (skip-chars-forward "^,:") (forward-char)
-                          until (= (char-before) ?:)))
+                          do (skip-chars-forward "^,:")
+                          until (eobp)
+                          until (= (char-after) ?:)
+                          do (forward-char)
+                          ))
       ))
 
 ; (inf-cabal-dev-unique-list (apply 'append (inf-cabal-dev-build-depends (find-file-noselect "/Users/philopon/src/yesod-platform-1.1.2/yesod-platform.cabal"))))
@@ -173,6 +176,7 @@
                                   ))
                           )))
     (inferior-haskell-start-process command)
+;    (loop for i in command do (message i))
     )
   )
 
