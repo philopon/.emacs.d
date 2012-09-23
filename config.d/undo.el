@@ -6,7 +6,7 @@
 (require 'myfunctions)
 (install-if-not-exists 'undo-tree)
 
-(setq undo-tree-auto-save-history t)
+; (setq undo-tree-auto-save-history t)
 (setq undo-tree-visualizer-timestamps t)
 
 (unless (file-exists-p "~/.emacs.d/undotree")
