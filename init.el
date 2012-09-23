@@ -3,7 +3,8 @@
 (add-to-list 'load-path "~/.emacs.d/elisp")
 
 (require 'myfunctions)
-(setq exec-path (append (get-path-from-environment-plist) exec-path))
+(when (file-exists-p "~/.MacOSX/environment.plist")
+  (setq exec-path (append (get-path-from-environment-plist) exec-path)))
 
 (setenv "PATH" (exec-path-to-env exec-path))
 
