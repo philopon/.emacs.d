@@ -108,10 +108,10 @@
 
 (split-string "builtin_rts" "-")
 
-(defun inf-cabal-dev-build-depends (buf)
+(defun inf-cabal-dev-get-section (target buf)
     (with-current-buffer buf
       (goto-char (point-min))
-      (loop while (re-search-forward "build-depends:" nil t)
+      (loop while (re-search-forward target nil t)
             collect (loop do (skip-chars-forward "[ \t\n]")
                           for start = (point)
                           do (skip-chars-forward "^[ \t\n]")
@@ -123,8 +123,8 @@
                           ))
       ))
 
-; (inf-cabal-dev-unique-list (apply 'append (inf-cabal-dev-build-depends (find-file-noselect "/Users/philopon/src/yesod-platform-1.1.2/yesod-platform.cabal"))))
-
+; (inf-cabal-dev-unique-list (apply 'append (inf-cabal-dev-get-section "build-depends:" (find-file-noselect "/Users/philopon/src/yesod-platform-1.1.2/yesod-platform.cabal"))))
+; (inf-cabal-dev-get-section "extensions:" (find-file-noselect "/Users/philopon/src/yesod-platform-1.1.2/yesod-platform.cabal"))
 
 (defun inf-cabal-dev-unique-list (list)
   (loop for item in list
@@ -163,7 +163,9 @@
                   (inf-cabal-dev-packages-id-from-package-conf)
                   ))
          (pkgs   (inf-cabal-dev-unique-list
-                  (apply 'append (inf-cabal-dev-build-depends cabal))))
+                  (apply 'append (inf-cabal-dev-get-section "build-depends:" cabal))))
+         (ext   (inf-cabal-dev-unique-list
+                 (apply 'append (inf-cabal-dev-get-section "extensions:" cabal))))
          (command (append (mapcar 'eval '(haskell-program-name
                                           (concat "-package-name " (inf-cabal-dev-get-package-name cabal))
                                           "-hide-all-packages"
@@ -176,6 +178,7 @@
                                    pkgs
                                    dict
                                   ))
+                          (mapcar (lambda (i) (concat "-X" i)) ext)
                           )))
     (inferior-haskell-start-process command)
 ;    (loop for i in command do (message i))
