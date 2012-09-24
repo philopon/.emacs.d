@@ -46,3 +46,4 @@
   )
 
 (add-hook 'haskell-mode-hook 'my-haskell-mode-hook)
+

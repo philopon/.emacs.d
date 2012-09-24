@@ -16,6 +16,7 @@
 (config-load "package.el")
 
 (config-load "undo.el")
-(config-load "anything.el")
+(config-load "helm.el")
 (config-load "auto-complete.el")
 (config-load "haskell.el")
+

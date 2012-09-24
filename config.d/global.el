@@ -18,7 +18,6 @@
 ;; カーソル点滅を無効に
 (blink-cursor-mode 0)
 
-
 ;; スクロールバー非表示
 (when (symbol-value 'window-system) (set-scroll-bar-mode nil))
 

@@ -3,8 +3,6 @@
 
 (require 'auto-complete-config)
 
-
-
 (add-to-list 'ac-dictionary-directories
              (concat (package-directory 'auto-complete) "dict")
              )
