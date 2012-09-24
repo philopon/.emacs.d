@@ -126,15 +126,17 @@
 (global-set-key "\C-j" 'newline)
 
 ;;Command - option 入れ替え
-(setq ns-command-modifier (quote meta))
-(setq ns-alternate-modifier (quote super))
+;(setq ns-command-modifier (quote meta))
+;(setq ns-alternate-modifier (quote super))
 
 ;;バックスペース
 (load "term/bobcat")
 (when (fboundp 'terminal-init-bobcat)
   (terminal-init-bobcat))
 
-
 (require 'myfunctions)
 (global-set-key "\C-v" 'scroll-up-or-goto-line)
 (global-set-key "\M-v" 'scroll-down-or-goto-line)
+
+
+(global-set-key "\e[25~" 'undo) ; F13
