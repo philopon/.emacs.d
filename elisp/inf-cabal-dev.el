@@ -70,17 +70,27 @@
              (message "cabal run failed."))
             (t
              (cd old-pwd)
-             (setq result (delete "--make"
-                                  (inf-cabal-dev-uniq-list
-                                   (apply 'append
-                                          (inf-cabal-dev-process-fake-ghc-output
-                                           (get-buffer bufname))))))
+             (setq result (inf-cabal-dev-deletes
+                           '("-threaded" "--make" "-prof")
+                           (inf-cabal-dev-uniq-list
+                            (apply 'append
+                                   (inf-cabal-dev-process-fake-ghc-output
+                                    (get-buffer bufname))))))
              (kill-buffer (get-buffer bufname))
              result
              )
             )
       )
      (t (message "package.conf not found.")))))
+
+(defun inf-cabal-dev-deletes (elts seq)
+  (let ((result seq))
+    (loop for elt in elts
+          do (setq result (delete elt result))
+          )
+    result
+    ))
+(inf-cabal-dev-deletes '("--make") '("--make" "-prof" "-XOverloadedStrings"))
 
 (defun inf-cabal-dev-split-args (args)
   (apply 'append (mapcar (lambda (i) (split-string i " ")) args))
