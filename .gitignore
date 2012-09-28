@@ -5,3 +5,6 @@ undotree/
 anything-c-adaptive-history
 auto-save-list
 url
+script/fake-ghc
+script/fake-ghc.hi
+script/fake-ghc.o

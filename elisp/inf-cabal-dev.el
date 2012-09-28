@@ -3,6 +3,22 @@
 (require 'haskell-cabal)
 (require 'cl)
 
+(defcustom fake-ghc-source "~/.emacs.d/script/fake-ghc.hs"
+  "fake ghc source")
+
+(defcustom fake-ghc-command (expand-file-name "~/.emacs.d/script/fake-ghc")
+  "fake ghc command")
+
+(defun compile-fake-ghc ()
+  (call-process (executable-find "ghc") nil nil nil
+                "-O2" (expand-file-name fake-ghc-source)
+                )
+  )
+
+(defun fake-ghc-exists-p ()
+  (file-executable-p fake-ghc-command)
+  )
+
 (defun inf-cabal-dev-uniq-buffer-name (bufname)
   (if (get-buffer bufname)
       (loop for i from 1
@@ -12,10 +28,6 @@
     bufname
   ))
 
-(defcustom fake-ghc-command
-  (or (executable-find "fake-ghc-cabal-dev")
-      (expand-file-name "~/.emacs.d/script/fake-ghc.py"))
-  "fake ghc command")
 
 (defun inf-cabal-dev-get-package-conf ()
   (when (haskell-cabal-find-dir)
@@ -54,6 +66,7 @@
 ; (cons "--interactive" (delete "--make" (inf-cabal-dev-uniq-list (apply 'append (inf-cabal-dev-process-fake-ghc-output (get-buffer "*inf-cabal-dev*"))))))
 
 (defun inf-cabal-dev-ghci-args ()
+  (unless (fake-ghc-exists-p) (compile-fake-ghc))
   (let ((old-pwd (file-name-directory (buffer-file-name)))
         (bufname (inf-cabal-dev-uniq-buffer-name "*inf-cabal-dev*"))
         pkg-conf result)
@@ -71,7 +84,7 @@
             (t
              (cd old-pwd)
              (setq result (inf-cabal-dev-deletes
-                           '("-threaded" "--make" "-prof")
+                           '("-threaded" "--make" "-prof" "-O" "-O1" "-O2")
                            (inf-cabal-dev-uniq-list
                             (apply 'append
                                    (inf-cabal-dev-process-fake-ghc-output
