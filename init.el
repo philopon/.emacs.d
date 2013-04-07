@@ -1,23 +1,52 @@
+(require 'package)
+(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
+(add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/") t)
+(package-initialize)
 
-(add-to-list 'load-path "~/src/ghc-mod-1.11.0/cabal-dev/share/ghc-mod-1.11.0")
-(add-to-list 'load-path "~/src/ghc-mod-1.11.0/cabal-dev/share/ghc-7.4.1/ghc-mod-1.11.0")
-(add-to-list 'load-path "~/.emacs.d/elisp")
+(unless (file-exists-p "~/.emacs.d/elpa/archives")
+  (package-refresh-contents))
 
-(require 'myfunctions)
-(when (file-exists-p "~/.MacOSX/environment.plist")
-  (setq exec-path (append (get-path-from-environment-plist) exec-path)))
+;; テンポラリディレクトリの作成
+(unless (file-exists-p "~/.emacs.tmp.d")
+  (make-directory "~/.emacs.tmp.d"))
 
-(setenv "PATH" (exec-path-to-env exec-path))
+;; exec-pathの退避
+(setq default-exec-path exec-path)
 
-(defun config-load (filename)
-  (load (concat "~/.emacs.d/config.d/" filename))
-)
+(defun use-package (name)
+  (when (not (package-installed-p name))
+    (package-install name)))
 
-(config-load "global.el")
-(config-load "package.el")
+;; exec-path/PATH登録
+(when (file-exists-p "~/.launchd.conf")
+  (with-temp-buffer
+    (insert-file-contents "~/.launchd.conf")
+    (let ((lines (split-string (buffer-substring-no-properties (point-min) (point-max)) "\n")))
+      (while lines
+        (let* ((line (car lines))
+               (split (split-string line " +"))
+               (cmd   (car split))
+               (key   (car (cdr split)))
+               (value (car (cdr (cdr split))))
+               )
+          (when (and (string= cmd "setenv") key value)
+            (setq exec-path (append default-exec-path (print (split-string value ":"))))
+            (setenv key value))
+          (setq lines (cdr lines)))))))
 
-(config-load "undo.el")
-(config-load "helm.el")
-(config-load "auto-complete.el")
-(config-load "haskell.el")
+
+;; global設定
+(load "~/.emacs.d/global")
+
+;; パッケージごとの設定
+(add-to-list 'load-path "~/.emacs.d/rc.d")
+(let ((files (directory-files "~/.emacs.d/rc.d/")))
+  (while files
+    (let ((file (car files)))
+      (when (string-match-p "\.el$" file)
+        (require (intern (substring file 0 (- (length file) 3)))))
+      (setq files (cdr files))
+      )))
+
+
 
