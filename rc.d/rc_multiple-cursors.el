@@ -1,5 +1,4 @@
-(use-package 'smartrep)
-(require 'smartrep)
+(require 'rc_smartrep)
 
 (use-package 'multiple-cursors)
 

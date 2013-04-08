@@ -1,5 +1,4 @@
-(use-package 'pos-tip)
-(require 'pos-tip)
+(require 'rc_pos-tip)
 
 (use-package 'auto-complete)
 (require 'auto-complete-config)
