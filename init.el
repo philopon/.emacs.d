@@ -1,3 +1,6 @@
+(setq max-specpdl-size 3000)
+(setq max-lisp-eval-depth 2000)
+
 (require 'package)
 (add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
 (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/") t)
