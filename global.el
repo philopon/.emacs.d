@@ -1,10 +1,11 @@
 ;; フォント設定
 (set-face-attribute 'default nil
-                    :family "Ricty Discord Ascii"
+                    :family "Ricty Discord"
                     :height 135)
 (set-fontset-font
  nil 'japanese-jisx0208
  (font-spec :family "Ricty Discord"))
+
 
 ;; 対応するカッコをハイライト
 (show-paren-mode t)
