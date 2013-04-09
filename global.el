@@ -21,7 +21,11 @@
 ;;行、列番号表示
 (column-number-mode t)
 
-;; 左に行番号
+;; http://d.hatena.ne.jp/daimatz/20120215/1329248780
+(setq linum-delay t)
+(defadvice linum-schedule (around my-linum-schedule () activate)
+  (run-with-idle-timer 0.2 nil #'linum-update-current))
+
 (global-linum-mode t)
 (setq linum-format "%4d")
 
@@ -109,8 +113,11 @@
 (require 'server)
 (unless (server-running-p) (server-start))
 
-(global-unset-key (kbd "C-x C-c"))
-(global-unset-key [(super q)])
+;; サスペンド終了関係の無効化
+(when (symbol-value 'window-system) 
+  (global-set-key (kbd "C-z") nil)
+  (global-unset-key (kbd "C-x C-c"))
+  (global-unset-key [(super q)]))
 (defalias 'exit-emacs 'save-buffers-kill-emacs)
 
 
