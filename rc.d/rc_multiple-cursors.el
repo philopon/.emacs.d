@@ -1,5 +1,7 @@
 (require 'rc_smartrep)
 
+(setq mc/list-file "~/.emacs.tmp.d/mc-lists.el")
+
 (use-package 'multiple-cursors)
 
 (global-unset-key (kbd "C-t"))
