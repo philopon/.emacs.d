@@ -109,10 +109,6 @@
 (global-set-key (kbd "C-v") 'num-prefixed-C-v)
 (global-set-key (kbd "M-v") 'num-prefixed-M-v)
 
-;; emacs server
-(require 'server)
-(unless (server-running-p) (server-start))
-
 ;; サスペンド終了関係の無効化
 (when (symbol-value 'window-system) 
   (global-set-key (kbd "C-z") nil)
