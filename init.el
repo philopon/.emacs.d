@@ -1,5 +1,5 @@
-(setq max-specpdl-size 3000)
-(setq max-lisp-eval-depth 2000)
+;(setq max-specpdl-size 3000)
+;(setq max-lisp-eval-depth 2000)
 
 (require 'package)
 (add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))

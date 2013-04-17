@@ -109,7 +109,10 @@
 (global-set-key (kbd "C-v") 'num-prefixed-C-v)
 (global-set-key (kbd "M-v") 'num-prefixed-M-v)
 
-;; サスペンド終了関係の無効化
+;; 再読み込み
+(global-auto-revert-mode t)
+
+;; サスペンド/終了関係の無効化
 (when (symbol-value 'window-system) 
   (global-set-key (kbd "C-z") nil)
   (global-unset-key (kbd "C-x C-c"))
