@@ -33,7 +33,7 @@
                (value (car (cdr (cdr split))))
                )
           (when (and (string= cmd "setenv") key value)
-            (setq exec-path (append default-exec-path (print (split-string value ":"))))
+            (setq exec-path (append (print (split-string value ":")) default-exec-path))
             (setenv key value))
           (setq lines (cdr lines)))))))
 
