@@ -11,10 +11,9 @@
 (setq ac-quick-help-delay 1.0)
 (ac-config-default)
 
-(require 'rc_helm)
-(use-package 'ac-helm)
-(require 'ac-helm)
-(define-key ac-complete-mode-map (kbd "C-;") 'ac-complete-with-helm)
-
+(when (require 'rc_helm nil t)
+  (use-package 'ac-helm)
+  (require 'ac-helm)
+  (define-key ac-complete-mode-map (kbd "C-;") 'ac-complete-with-helm))
 
 (provide 'rc_auto-complete)

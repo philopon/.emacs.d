@@ -4,8 +4,8 @@
 (setq python-indent-offset 4)
 
 (defun jedi-python-mode-hook ()
-  (when (= (call-process (executable-find "python") nil nil nil "-c" "import epc, jedi") 0)
-    (require 'rc_auto-complete)
+  (when (and (= (call-process (executable-find "python") nil nil nil "-c" "import epc, jedi") 0)
+             (require 'rc_auto-complete nil t))
     (auto-complete-mode t)
     (jedi:ac-setup)
     (jedi-mode t)

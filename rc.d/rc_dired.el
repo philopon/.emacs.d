@@ -10,9 +10,9 @@
 (define-key dired-mode-map "r" 'wdired-change-to-wdired-mode)
 
 (require 'dired-x)
-(require 'rc_popwin)
 
-(push '(dired-mode :position left :width 100) popwin:special-display-config)
-(global-set-key (kbd "C-x d") 'dired-jump-other-window)
+(when (require 'rc_popwin nil t)
+  (push '(dired-mode :position left :width 100) popwin:special-display-config)
+  (global-set-key (kbd "C-x d") 'dired-jump-other-window))
 
 (provide 'rc_dired)

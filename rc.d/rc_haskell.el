@@ -25,8 +25,8 @@
 
 (setq ghc-flymake-command t)
 
-(require 'rc_undo-tree)
-(add-to-list 'undo-tree-incompatible-major-modes 'inferior-haskell-mode)
+(when (require 'rc_undo-tree nil t)
+  (add-to-list 'undo-tree-incompatible-major-modes 'inferior-haskell-mode))
 
 (add-hook 'haskell-mode-hook
           (lambda ()

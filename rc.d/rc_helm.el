@@ -27,7 +27,7 @@
 
 (use-package 'helm-ls-git)
 
-(require 'rc_popwin nil t)
-(push '("^\\*helm.*\\*$" :regexp t)      popwin:special-display-config)
+(when (require 'rc_popwin nil t)
+  (push '("^\\*helm.*\\*$" :regexp t)      popwin:special-display-config))
 
 (provide 'rc_helm)
